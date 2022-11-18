@@ -18,4 +18,8 @@ class PlayerSkill extends Model
         'skill',
         'value'
     ];
+    
+    public function player(){
+        $this->belongsTo(Player::class);
+    }
 }

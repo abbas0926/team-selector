@@ -7,6 +7,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreatePlayerRequest;
+use App\Http\Resources\PlayerResource;
+use App\Models\Player;
+use App\Models\PlayerSkill;
+
 class PlayerController extends Controller
 {
     public function index()
@@ -19,9 +24,28 @@ class PlayerController extends Controller
         return response("Failed", 500);
     }
 
-    public function store()
+    public function store(CreatePlayerRequest $request)
     {
+        try {
+            $player=Player::create($request->only('name','position'));
+            $skills=$request->playerSkills;
+            $skills= array_map(function($element) use($player){
+                return [
+                    'skill' => $element['skill'],
+                    'value' =>$element['value'],
+                    'player_id'=>$player->id,
+                ];
+            }, $skills);
+
+            PlayerSkill::insert($skills);
+
+            $result=Player::where('id',$player->id)->with('playerSkills')->first();
+            return new PlayerResource($result);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
         return response("Failed", 500);
+       
     }
 
     public function update()

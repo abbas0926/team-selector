@@ -25,4 +25,8 @@ class Player extends Model
         'name',
         'position'
     ];
+
+    public function playerSkills(){
+        return $this->hasMany(PlayerSkill::class);
+    }
 }
