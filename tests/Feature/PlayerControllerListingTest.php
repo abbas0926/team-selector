@@ -15,5 +15,4 @@ class PlayerControllerListingTest extends PlayerControllerBaseTest
 
         $this->assertNotNull($res);
     }
-
 }

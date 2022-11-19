@@ -9,6 +9,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreatePlayerRequest;
 use App\Http\Requests\UpdatePlayerRequest;
+use App\Http\Resources\PlayerCollection;
 use App\Http\Resources\PlayerResource;
 use App\Models\Player;
 use App\Models\PlayerSkill;
@@ -17,6 +18,14 @@ class PlayerController extends Controller
 {
     public function index()
     {
+        try {
+
+            $players=Player::with('playerSkills')->get();
+            return new PlayerCollection($players);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+
         return response("Failed", 500);
     }
 
@@ -60,21 +69,31 @@ class PlayerController extends Controller
             $player->save();
 
             foreach ($request->playerSkills as $playerSkill) {
-                // dd($playerSkill);
                 PlayerSkill::updateOrCreate(['player_id' => $player->id,'skill' => $playerSkill['skill']],['value' => $playerSkill['value']]);
             }
+
             $result=Player::where('id',$player->id)->with('playerSkills')->first();
             return new PlayerResource($result);
+
         } catch (\Throwable $th) {
             throw $th;
         }
 
-
         return response("Failed", 500);
     }
 
-    public function destroy()
+    public function destroy($id)
     {
+        try {
+
+            $player=Player::find($id);
+            $player->delete();
+            return response([],200);
+            
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+
         return response("Failed", 500);
     }
 }

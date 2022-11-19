@@ -24,4 +24,9 @@ class TeamControllerTest extends PlayerControllerBaseTest
 
         $this->assertNotNull($res);
     }
+
+    /** @test */
+    public function user_can_select_team(){
+        
+    }
 }
