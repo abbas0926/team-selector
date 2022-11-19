@@ -42,7 +42,7 @@ class PlayerControllerCreateTest extends PlayerControllerBaseTest
       /**@test */
     public function user_can_create_player_with_player_skills(){
         $data = [
-            "name" => "test",
+            "name" => "Player Name",
             "position" => "defender",
             "playerSkills" => [
                 0 => [

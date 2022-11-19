@@ -21,6 +21,7 @@ return new class extends Migration
                 ->constrained('players')
                 ->restrictOnUpdate()
                 ->cascadeOnDelete();
+            $table->timestamps();
         });
     }
 
