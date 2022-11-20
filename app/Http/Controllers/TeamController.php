@@ -7,6 +7,7 @@ use App\Http\Resources\PlayerCollection;
 use App\Http\Resources\SelectedPlayerCollection;
 use App\Http\Resources\SelectedPlayerResource;
 use App\Models\Player;
+use App\Services\PlayerService;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,25 +15,27 @@ use Illuminate\Support\Facades\Validator;
 
 class TeamController extends Controller
 {
+    private $playerService;
+
+    public function __construct(PlayerService $playerService)
+    {
+        $this->playerService = $playerService;
+    }
+
     public function process(TeamSelectionRequest $request){
 
         try {
             $result=[];
             foreach ($request->request as $key => $value) {
-            $availablePlayersForPosition=Player::where('position',$value['position'])->count();
+            $availablePlayersForPosition=$this->playerService
+            ->numberOfPlayersInPosition($value['position']);
             
             if($availablePlayersForPosition<$value['numberOfPlayers']){
                 return response(["message"=>"Insufficient number of players for position: ".$value['position']], 400);
             }
             
-            $playersInPositionWithSkill=DB::table('players')
-                ->where('position','=',$value['position'])
-                ->join('player_skills','players.id','=','player_skills.player_id')
-                ->orderByRaw(DB::raw("CASE WHEN skill = '".$value['mainSkill']."' THEN 1 ELSE 2 END"))
-                ->orderBy('player_skills.value','desc')
-                ->take($value['numberOfPlayers'])
-                ->get();
-            
+            $playersInPositionWithSkill=$this->playerService
+            ->playersInPositionWithSkill($value['position'],$value['mainSkill'],$value['numberOfPlayers']);
             
             $players= array_map(function($element) {
                 return [

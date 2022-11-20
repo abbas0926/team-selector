@@ -13,15 +13,29 @@ use App\Http\Resources\PlayerCollection;
 use App\Http\Resources\PlayerResource;
 use App\Models\Player;
 use App\Models\PlayerSkill;
+use App\Services\PlayerService;
+use App\Services\PlayerSkillService;
 
 class PlayerController extends Controller
 {
+
+    private $playerService;
+    private $playerSkillService;
+
+    public function __construct(PlayerService $playerService, PlayerSkillService $playerSkillService)
+    {
+        $this->playerService = $playerService;
+        $this->playerSkillService = $playerSkillService;
+
+    }
+
     public function index()
     {
         try {
 
-            $players=Player::with('playerSkills')->get();
+            $players=$this->playerService->getAll();
             return new PlayerCollection($players);
+
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -37,20 +51,12 @@ class PlayerController extends Controller
     public function store(CreatePlayerRequest $request)
     {
         try {
-            $player=Player::create($request->only('name','position'));
+
+            $player=$this->playerService->create($request->only('name','position'));
             $skills=$request->playerSkills;
+            $this->playerSkillService->insert($skills,$player);
+            $result=$this->playerService->getOne($player->id);
 
-            $skills= array_map(function($element) use($player){
-                return [
-                    'skill' => $element['skill'],
-                    'value' =>$element['value'],
-                    'player_id'=>$player->id,
-                ];
-            }, $skills);
-
-            PlayerSkill::insert($skills);
-
-            $result=Player::where('id',$player->id)->with('playerSkills')->first();
             return new PlayerResource($result);
         } catch (\Throwable $th) {
             throw $th;
@@ -64,15 +70,10 @@ class PlayerController extends Controller
     {
         try {
 
-            $player=Player::find($id);
-            $player->update($request->only('name','position'));
-            $player->save();
+            $this->playerService->update($id,$request->only('name','position'));
+            $this->playerSkillService->updateOrCreate($request->playerSkills,$id);
+            $result=$this->playerService->getOne($id);
 
-            foreach ($request->playerSkills as $playerSkill) {
-                PlayerSkill::updateOrCreate(['player_id' => $player->id,'skill' => $playerSkill['skill']],['value' => $playerSkill['value']]);
-            }
-
-            $result=Player::where('id',$player->id)->with('playerSkills')->first();
             return new PlayerResource($result);
 
         } catch (\Throwable $th) {
@@ -86,8 +87,7 @@ class PlayerController extends Controller
     {
         try {
 
-            $player=Player::find($id);
-            $player->delete();
+            $this->playerService->delete($id);
             return response([],200);
             
         } catch (\Throwable $th) {

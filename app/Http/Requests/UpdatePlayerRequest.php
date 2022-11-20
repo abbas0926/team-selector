@@ -44,6 +44,6 @@ class UpdatePlayerRequest extends FormRequest
         $response = [
             'message' => $validator->errors()->first(),
         ];
-        throw new HttpResponseException(response()->json($response, 403)); 
+        throw new HttpResponseException(response()->json($response, 400)); 
     }
 }
