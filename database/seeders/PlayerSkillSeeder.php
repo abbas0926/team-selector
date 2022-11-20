@@ -15,10 +15,9 @@ class PlayerSkillSeeder extends Seeder
      */
     public function run()
     {
-        $playerSkills = PlayerSkill::factory()->count(50)->make();
+        $playerSkills = PlayerSkill::factory()->count(20)->make();
 
         foreach ($playerSkills as $playerSkill) {
-           
             try {
                 $playerSkill->save();
             } catch (\Throwable $th) {

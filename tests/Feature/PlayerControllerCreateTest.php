@@ -8,6 +8,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Player;
 
 class PlayerControllerCreateTest extends PlayerControllerBaseTest
 {
@@ -28,21 +29,14 @@ class PlayerControllerCreateTest extends PlayerControllerBaseTest
             ]
         ];
 
-       
-
-
         $res = $this->postJson(self::REQ_URI, $data);
-
         $this->assertNotNull($res);
-    
-
-      
     }
 
-      /**@test */
+      /** @test */
     public function user_can_create_player_with_player_skills(){
         $data = [
-            "name" => "Player Name",
+            "name" => "test",
             "position" => "defender",
             "playerSkills" => [
                 0 => [
@@ -85,7 +79,7 @@ class PlayerControllerCreateTest extends PlayerControllerBaseTest
 
 
     /** @test */
-    public function user_cant_create_player_with_invalid_value_name(){
+    public function user_cant_create_player_with_invalid_name_field(){
         $data = [
             "name" => "",
             "position" => "defender",
@@ -113,10 +107,10 @@ class PlayerControllerCreateTest extends PlayerControllerBaseTest
     }
 
     /** @test */
-    public function user_cant_create_player_with_invalid_value_for_position(){
+    public function user_cant_create_player_with_invalid_value_for_position_field(){
         $data = [
             "name" => "Player one",
-            "position" => "wrong position",
+            "position" => "post",
             "playerSkills" => [
                 0 => [
                     "skill" => "attack",
@@ -134,63 +128,7 @@ class PlayerControllerCreateTest extends PlayerControllerBaseTest
         $this->assertNotNull($res);
 
         $expectedResponse = [
-            "message" => "Invalid value for position: wrong position"
-        ];
-
-        $res->assertJson($expectedResponse, true);
-    }
-
-    /** @test */
-    public function user_cant_create_player_with_invalid_value_for_skill(){
-        $data = [
-            "name" => "Player one",
-            "position" => "defender",
-            "playerSkills" => [
-                0 => [
-                    "skill" => "wrong skill",
-                    "value" => 60
-                ],
-                1 => [
-                    "skill" => "speed",
-                    "value" => 80
-                ]
-            ]
-        ];
-
-        $res = $this->postJson(self::REQ_URI, $data);
-
-        $this->assertNotNull($res);
-
-        $expectedResponse = [
-            "message" => "Invalid value for playerSkills.0.skill: wrong skill"
-        ];
-
-        $res->assertJson($expectedResponse, true);
-    }
-
-    /** @test */
-    public function user_cant_create_player_with_invalid_value_for_skill_value(){
-        $data = [
-            "name" => "Player one",
-            "position" => "defender",
-            "playerSkills" => [
-                0 => [
-                    "skill" => "defense",
-                    "value" => 'wrong value'
-                ],
-                1 => [
-                    "skill" => "speed",
-                    "value" => 80
-                ]
-            ]
-        ];
-
-        $res = $this->postJson(self::REQ_URI, $data);
-
-        $this->assertNotNull($res);
-
-        $expectedResponse = [
-            "message" => "Invalid value for playerSkills.0.value: wrong value"
+            "message" => "Invalid value for position: post"
         ];
 
         $res->assertJson($expectedResponse, true);

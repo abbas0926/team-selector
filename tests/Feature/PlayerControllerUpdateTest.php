@@ -7,6 +7,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Player;
 
 class PlayerControllerUpdateTest extends PlayerControllerBaseTest
 {
@@ -32,10 +33,13 @@ class PlayerControllerUpdateTest extends PlayerControllerBaseTest
         $this->assertNotNull($res);
     }
 
-     /**@test */
-     public function user_can_update_player_with_player_skills(){
-        $data = [
-            "name" => "New player Name",
+     /** @test */
+     public function user_can_update_a_player_and_his_skills(){
+
+
+
+        $newPlayerData = [
+            "name" => "New Player Name",
             "position" => "defender",
             "playerSkills" => [
                 0 => [
@@ -49,25 +53,42 @@ class PlayerControllerUpdateTest extends PlayerControllerBaseTest
             ]
         ];
 
-        $res = $this->postJson(self::REQ_URI . 1, $data);
+        Player::create($newPlayerData);
+
+        $updatePlayerData = [
+            "name" => "Updated Player Name",
+            "position" => "forward",
+            "playerSkills" => [
+                0 => [
+                    "skill" => "strength",
+                    "value" => 50
+                ],
+                1 => [
+                    "skill" => "speed",
+                    "value" => 18
+                ]
+            ]
+        ];
+
+        $res = $this->putJson(self::REQ_URI . 1, $updatePlayerData);
 
         $this->assertNotNull($res);
 
         $expectedResponse = [
             "id" => 1,
-            "name" => "test",
-            "position" => "defender",
+            "name" => "Updated Player Name",
+            "position" => "forward",
             "playerSkills" => [
                 0 => [
                     "id" => 1,
-                    "skill" => "attack",
-                    "value" => 60,
+                    "skill" => "strength",
+                    "value" => 50,
                     "playerId" => 1,
                 ],
                 1 => [
                     "id" => 2,
                     "skill" => "speed",
-                    "value" => 80,
+                    "value" => 18,
                     "playerId" => 1,
                 ]
             ]

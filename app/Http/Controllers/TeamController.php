@@ -3,15 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TeamSelectionRequest;
-use App\Http\Resources\PlayerCollection;
-use App\Http\Resources\SelectedPlayerCollection;
-use App\Http\Resources\SelectedPlayerResource;
-use App\Models\Player;
 use App\Services\PlayerService;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+
 
 class TeamController extends Controller
 {
