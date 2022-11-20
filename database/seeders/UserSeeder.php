@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
         $accessToken = $user->createToken('API Token')->plainTextToken;
-        1a8b194037ab3c2b186256623c06ba7e97667bab3a98732988a216540abd6b76
+       
 
         
     }
