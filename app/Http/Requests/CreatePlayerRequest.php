@@ -42,7 +42,7 @@ class CreatePlayerRequest extends FormRequest
 
     protected function failedValidation(Validator $validator) { 
         $response = [
-            'message' => $validator->errors()->first(),
+            'errors' => $validator->errors()->first(),
         ];
         throw new HttpResponseException(response()->json($response, 400)); 
     }
